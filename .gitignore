@@ -12,3 +12,9 @@ url_check_log.json
 baseline.json
 backups/
 results_base.*
+
+# Local application credentials and vault data
+security.json
+central_vault.json
+vault_backups/
+access_token.png
