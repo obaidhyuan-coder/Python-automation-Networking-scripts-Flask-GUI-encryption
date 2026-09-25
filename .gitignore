@@ -1,7 +1,14 @@
-.venv
-__pycache__
-*.pyc
-.pytest_cache
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
 .DS_Store
-*.egg-info
 
+# Local data and generated output
+passwords.json
+url_check_log.json
+baseline.json
+backups/
+results_base.*
