@@ -1,31 +1,130 @@
 # Secure Local Vault Demo
 
-A beginner-friendly Python desktop utility for local file protection and access control. It demonstrates Tkinter GUI development, password hashing, authenticated file encryption with Fernet, local vault metadata, and a separate Flask backup API.
+A Python portfolio project that combines a local desktop vault, file-protection workflows, a small Flask backup API, and educational automation and networking utilities.
+
+This repository is designed to demonstrate practical Python skills in an honest, beginner-friendly way. The **Secure Local Vault** is the main desktop project. The Flask API and networking scripts are separate supporting examples rather than one production security platform.
+
+> **Status:** learning and portfolio project. It is not a professionally audited password manager, encryption product, or enterprise cybersecurity platform.
 
 ## Project story
 
-I built this project to practice turning a security-focused idea into a usable desktop workflow: a user authenticates, enters a key, encrypts or restores a local file, and records basic vault metadata. The Flask API is intentionally separate and demonstrates how the same project can expose a small local automation service.
+I built this project to practice turning a security-focused idea into a usable desktop workflow. A user authenticates, enters a key, encrypts or restores local text and files, and records basic metadata in a local vault.
 
-This is a portfolio and learning project—not a replacement for a professionally audited password manager or enterprise security product.
+The repository also contains a separate Flask backup example and smaller automation/networking scripts created while learning Python. Together, the projects demonstrate GUI development, file processing, authentication logic, local backups, HTTP/DNS work, and command-line automation.
 
-## Features
+## What is included
+
+### Main project: Secure Local Vault
 
 - Tkinter desktop interface
-- PBKDF2-HMAC-SHA256 password verification with lockout logic
-- Fernet-based authenticated encryption for text and files
+- Local login screen with lockout logic
+- PBKDF2-HMAC-SHA256 password verification
+- Fernet-based authenticated encryption workflow
 - Local vault metadata and backup records
-- QR token demo
-- Separate localhost-only Flask backup example
+- QR-token demonstration
+
+### Separate Flask example
+
+- Local health endpoint
+- JSON-based backup request handling
+- Backup archive creation and rotation
+- Path and retention validation
+- Localhost-first configuration
+
+The Flask example is independent of the desktop GUI. You can run either project without needing the other.
+
+### Automation and networking utilities
+
+The repository also includes standalone educational scripts for:
+
+- TCP and UDP port scanning
+- DNS and host lookups
+- HTTP fetching
+- URL reputation and suspicious-pattern checks
+- File-integrity hashing and comparison
+- Log and text statistics
+- Network summaries
+- Backup automation
+- Basic vulnerability-checking experiments
+- Password-hashing demonstrations
+
+These utilities are supporting learning examples. They are not presented as a complete security toolkit and should only be used on systems, files, and URLs that you own or are authorized to test.
+
+## Repository structure
+
+```text
+.
+├── README.md
+├── LICENSE
+├── SECURITY.md
+├── requirements.txt
+├── cyber_station.py                 # Desktop app entry point
+├── Login_View.py                    # Login window
+├── View.py                          # Main Tkinter vault interface
+├── Controller.py                    # GUI actions and encryption workflow
+├── System_Auth.py                   # Password hashing and lockout logic
+├── Vault.py                         # Local metadata and vault backups
+├── AdvancedCipher.py                # QR-token and encryption helper
+├── src/
+│   ├── app.py                       # Separate Flask backup API
+│   ├── automation/backup.py         # Flask backup implementation
+│   └── automation_networking _scripts/ # Standalone learning utilities
+├── docs/
+│   └── flask-api.md                 # Flask example notes
+├── assets/
+│   └── screenshots/                 # Optional portfolio screenshots
+└── tests/                            # Automated tests
+```
+
+## Why this project is useful for small freelance jobs
+
+This repository demonstrates experience with:
+
+- Python desktop applications
+- Tkinter GUI development
+- File reading, writing, and transformation
+- Password verification and lockout flows
+- JSON data storage
+- Local backup automation
+- Flask routes and JSON APIs
+- DNS, HTTP, and networking utilities
+- Command-line scripts and input validation
+
+This is relevant to small freelance tasks such as:
+
+- Python automation scripts
+- File-management utilities
+- Tkinter interface fixes
+- JSON or CSV processing
+- Local backup tools
+- Simple Flask endpoints
+- Beginner Python debugging and improvements
 
 ## Screenshots
 
-Screenshots can be added to `assets/screenshots/` and linked here:
+Add screenshots to `assets/screenshots/` when available:
 
-| Login | Vault workspace |
-| --- | --- |
-| Add `assets/screenshots/login.png` | Add `assets/screenshots/vault.png` |
+```text
+assets/screenshots/
+├── login.png
+├── vault.png
+├── qr-token.png
+└── app-overview.png
+```
+
+Then include them in this section:
+
+```md
+![Login screen](assets/screenshots/login.png)
+
+![Vault workspace](assets/screenshots/vault.png)
+```
+
+Screenshots should show the application with demonstration data only. Do not capture real passwords, private files, or production secrets.
 
 ## Quick start
+
+### 1. Create a virtual environment
 
 ```bash
 python -m venv .venv
@@ -35,18 +134,22 @@ source .venv/bin/activate
 
 # Windows PowerShell
 # .venv\Scripts\Activate.ps1
+```
 
+### 2. Install dependencies
+
+```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-Run the desktop app:
+### 3. Run the desktop vault
 
 ```bash
 python cyber_station.py
 ```
 
-On first run, set an initial password before starting the app:
+For a new local demo, set an initial password before starting the app:
 
 ```bash
 # macOS/Linux
@@ -56,38 +159,55 @@ export APP_DEFAULT_PASSWORD='choose-a-local-password'
 $env:APP_DEFAULT_PASSWORD = 'choose-a-local-password'
 ```
 
-Do not use a real production password in this demo.
+Do not use a real production password in this demo repository.
 
-## Separate Flask example
-
-The Flask backup API is not required by the desktop app. It is kept as an independent local automation example:
+### 4. Run the separate Flask example
 
 ```bash
 python -m src.app
 ```
 
-It listens on localhost by default. Do not expose it publicly without authentication, authorization, TLS, rate limiting, and a security review. More details are in `docs/flask-api.md`.
+The Flask app binds to localhost by default. See [`docs/flask-api.md`](docs/flask-api.md) for its purpose and limitations.
 
-## Repository layout
+### 5. Run tests
+
+```bash
+pytest
+```
+
+## Generated local files
+
+The applications may create local files such as:
 
 ```text
-cyber_station.py       Desktop app entry point
-Login_View.py          Login window
-View.py                Tkinter vault interface
-Controller.py          GUI actions and encryption workflow
-System_Auth.py         Password hashing and lockout logic
-Vault.py               Local metadata and vault backups
-AdvancedCipher.py      QR-token demo helper
-src/app.py             Separate Flask backup example
-src/automation/backup.py Flask backup implementation
-tests/                 Automated tests
-assets/screenshots/    Portfolio screenshots
+security.json
+central_vault.json
+vault_backups/
+access_token.png
+*.secured
+*.restored
 ```
+
+These are local demo data and should remain excluded from version control. Never commit real passwords, keys, tokens, or private files.
 
 ## Limitations and responsible use
 
-Use this only with files and systems you own or are authorized to test. Keep generated files such as `security.json`, `central_vault.json`, `vault_backups/`, and `access_token.png` out of version control. This project has not been independently audited and should not be used to protect sensitive production data.
+Use the networking, URL, backup, and security utilities only with systems, networks, files, and URLs that you own or are explicitly authorized to test. Scanning or probing third-party systems may be illegal or disruptive.
+
+The tools use simple demonstrations and heuristics. They can produce false positives and false negatives. This project should not be marketed as:
+
+- A production-grade password manager
+- An enterprise file-encryption platform
+- A professional penetration-testing toolkit
+- A compliance or hardening product
+- A guarantee that a file, URL, or system is safe
+
+The Flask backup endpoint is intended for local development. Do not expose it to an untrusted network without authentication, authorization, TLS, rate limiting, and a security review. See [`SECURITY.md`](SECURITY.md).
 
 ## License
 
-MIT License. See `LICENSE`.
+This project is licensed under the MIT License. See [`LICENSE`](LICENSE).
+
+## Portfolio description
+
+> Python portfolio project featuring a Tkinter secure local vault demo, password protection, file-encryption workflows, a separate Flask backup API, and educational automation/networking utilities.
