@@ -1,20 +1,13 @@
+# Generated local data
+security.json
+central_vault.json
+vault_backups/
+access_token.png
+*.secured
+*.restored
+
 # Python
 .venv/
 __pycache__/
 *.py[cod]
 .pytest_cache/
-*.egg-info/
-.DS_Store
-
-# Local data and generated output
-passwords.json
-url_check_log.json
-baseline.json
-backups/
-results_base.*
-
-# Local application credentials and vault data
-security.json
-central_vault.json
-vault_backups/
-access_token.png
