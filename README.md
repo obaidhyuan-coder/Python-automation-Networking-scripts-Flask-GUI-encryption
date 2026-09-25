@@ -1,92 +1,78 @@
-# Python Automation, Networking Scripts & Flask
+# Secure Local Vault Demo
 
-A small educational collection of Python networking, automation, file-integrity, backup, and URL-analysis utilities, with a deliberately limited Flask API for local backup operations.
+This project is a small Python desktop application focused on secure local file handling and basic authentication. It combines a Tkinter GUI, simple file encryption/decryption, a local JSON-based vault, and a Flask backup endpoint for local automation experiments.
 
-> **Status:** educational/portfolio project. The scripts are not a production security platform.
+> This project is intended as a learning and portfolio project. It is not a production-grade enterprise security product.
 
-## Responsible use
+## What it includes
 
-Use the networking and security tools only against systems, networks, and URLs that you own or are explicitly authorized to test. Scanning or probing third-party systems without permission may be illegal or disruptive. Results are heuristic and must not be treated as proof that a system is safe or vulnerable. See [SECURITY.md](SECURITY.md).
+- Local login screen with lockout logic
+- File encryption and restoration flow
+- Local vault metadata records
+- QR-token generation for a simple payload handshake
+- A small Flask API for backup operations
+- Networking utility scripts for experimentation and learning
 
-## Features
+## How to run
 
-- Local Flask health endpoint and controlled backup endpoint
-- TCP port scanning utilities
-- DNS and host lookup helpers
-- URL pattern/reputation checks
-- HTTP fetching
-- File-integrity hashing and comparison
-- Log and network-summary helpers
-- Local password-hash demonstration using salted PBKDF2-HMAC-SHA256
-
-## Setup
-
-Python 3.10 or newer is recommended.
+### 1) Create a virtual environment
 
 ```bash
 python -m venv .venv
-# Linux/macOS
-source .venv/bin/activate
-# Windows PowerShell
-# .venv\\Scripts\\Activate.ps1
 
+# macOS/Linux
+source .venv/bin/activate
+
+# Windows PowerShell
+# .venv\Scripts\Activate.ps1
+```
+
+### 2) Install dependencies
+
+```bash
 python -m pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-## Run the Flask app safely
+### 3) Start the desktop app
 
-The application binds to `127.0.0.1` by default and runs with debug mode disabled.
+```bash
+python cyber_stastion.py
+```
+
+The first login uses the default password from the environment variable `APP_DEFAULT_PASSWORD` if it is set, otherwise it defaults to `change-me`. Change that immediately before any real use.
+
+### 4) Run the Flask app (optional)
 
 ```bash
 python -m src.app
 ```
 
-Endpoints:
-
-- `GET /` — service information
-- `GET /health` — health check
-- `POST /backup` — create a backup within the configured backup root
-
-Example:
-
-```bash
-curl -X POST http://127.0.0.1:5000/backup \
-  -H 'Content-Type: application/json' \
-  -d '{"src":"./data","dest":"./backups","keep":7}'
-```
-
-The default allowed root is the current working directory. Set `BACKUP_ROOT` to a dedicated directory before using the endpoint. Do not expose this development service directly to the internet; add authentication, authorization, HTTPS, rate limiting, and an audited storage policy first.
-
-## Run the scripts
-
-The scripts are standalone and can be run by path, for example:
-
-```bash
-python "src/automation_networking _scripts/port_scanner_advanced.py" --host 127.0.0.1 --ports 22,80,443
-python "src/automation_networking _scripts/dns_lookup.py"
-python "src/automation_networking _scripts/url_reputation_checker.py"
-python "src/automation_networking _scripts/password_manager.py"
-```
-
-Some URL-analysis scripts require the third-party packages listed in `requirements.txt`.
-
-## Project layout
+## Project structure
 
 ```text
-src/
-  app.py                         Flask application factory and routes
-  automation/backup.py           Backup implementation used by the API
-  automation_networking _scripts/ Standalone utilities
-requirements.txt                 Runtime dependencies
-SECURITY.md                      Responsible-use and security notes
-LICENSE                          MIT license
+AdvancedCipher.py        QR-token and payload helper
+Caesar.py                Legacy demo cipher
+Controller.py            GUI controller and secure file logic
+Login_View.py            Auth UI
+System_Auth.py           Password hashing and lockout logic
+View.py                 Main encrypted file UI
+Vault.py                Local vault and file backup utilities
+cyber_stastion.py        App launcher
+src/app.py               Flask backup API
+src/automation/backup.py Backup helper functions
+requirements.txt         Python dependencies
+SECURITY.md              Security and responsible-use guidance
+LICENSE                  MIT license
 ```
 
-## Limitations
+## Security notes
 
-These tools are intentionally simple. They do not provide comprehensive vulnerability detection, secure secret management, malware detection, or a guarantee of URL safety. Review and test changes before using them with important data.
+- Never store real passwords or production secrets in version control.
+- Do not expose the Flask API on a public network without authentication and TLS.
+- Treat the app as a local demo only.
+- For real data protection, use hardened, maintained libraries and proper secret management.
 
 ## License
 
-Released under the MIT License. See [LICENSE](LICENSE).
+This project is licensed under the MIT License. See `LICENSE`.

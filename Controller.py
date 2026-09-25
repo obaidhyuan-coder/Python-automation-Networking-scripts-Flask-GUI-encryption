@@ -1,16 +1,19 @@
+import base64
+import hashlib
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import filedialog, messagebox
+
 import qrcode
-from Caesar import CaesarCipher
-from Vault import VaultManager
+
 from AdvancedCipher import AdvancedCipher
+from Vault import VaultManager
+
 
 class CipherController:
     def __init__(self, view, engine):
         self.view = view
         self.engine = engine
-       
-        self.vault = VaultManager('enc') 
+        self.vault = VaultManager("enc")
 
         self.view.btn_enc.config(command=self.encrypt_text)
         self.view.btn_dec.config(command=self.decrypt_text)
@@ -18,81 +21,92 @@ class CipherController:
         self.view.btn_f_dec.config(command=self.file_decrypt)
         self.view.btn_exp.config(command=self.export_qr)
 
+    def _build_fernet(self):
+        key_input = self.view.ent_key.get().strip()
+        if not key_input:
+            raise ValueError("A key is required")
+
+        key_material = hashlib.sha256(key_input.encode("utf-8")).digest()
+        return Fernet(base64.urlsafe_b64encode(key_material))
+
     def get_key(self):
-        key_input = self.view.ent_key.get()
-        
+        key_input = self.view.ent_key.get().strip()
         try:
-           
-            if not key_input.strip():
+            if not key_input:
                 raise ValueError
-            return int(key_input)
-            
+            return key_input
         except (ValueError, TypeError):
-           
-            messagebox.showwarning("SECURITY WARNING", "Invalid key provided. Defaulting to 0.")
-            return 0
+            messagebox.showwarning("SECURITY WARNING", "Invalid key provided. Please enter a non-empty value.")
+            return None
 
     def encrypt_text(self):
         text = self.view.ent_msg.get()
         key = self.get_key()
-        if text and key is not None:
-            cipher = CaesarCipher(key)
-            res = cipher.encrypt(text)
+        if text and key:
+            cipher = self._build_fernet()
+            encrypted = cipher.encrypt(text.encode("utf-8")).decode("utf-8")
             self.view.ent_msg.delete(0, "end")
-            self.view.ent_msg.insert(0,res)
+            self.view.ent_msg.insert(0, encrypted)
             self.view.ent_msg.config(fg="#00ff00")
 
-
     def decrypt_text(self):
-       
         text = self.view.ent_msg.get()
         key = self.get_key()
-        if text and key is not None:
-            cipher = CaesarCipher(key)
-            res = cipher.decrypt(text)
-            self.view.ent_msg.delete(0,"end")
-            self.view.ent_msg.insert(0,res)
-            self.view.ent_msg.config(fg="#38bdf8")
+        if text and key:
+            try:
+                cipher = self._build_fernet()
+                decrypted = cipher.decrypt(text.encode("utf-8")).decode("utf-8")
+                self.view.ent_msg.delete(0, "end")
+                self.view.ent_msg.insert(0, decrypted)
+                self.view.ent_msg.config(fg="#38bdf8")
+            except Exception:
+                messagebox.showerror("Decrypt failed", "The message could not be decrypted with the supplied key.")
 
     def file_encrypt(self):
         key = self.get_key()
+        if not key:
+            return
         path = filedialog.askopenfilename(title="SECURE EXTERNAL FILE")
-        if path and key:
-            content = self.vault.read_file(path)
-            cipher = CaesarCipher(key)
-            enc_data = cipher.encrypt(content)
-            
-           
-            new_path = self.vault.save_file(path, enc_data, "secured")
-            
-            self.view.lbl_output.config(text=f"FILE SECURED: {new_path}",fg="#00ff00")
+        if path:
+            try:
+                cipher = self._build_fernet()
+                with open(path, "rb") as file:
+                    content = file.read()
+                encrypted = cipher.encrypt(content)
+                new_path = self.vault.save_file(path, encrypted.decode("utf-8"), "secured")
+                self.view.lbl_output.config(text=f"FILE SECURED: {new_path}", fg="#00ff00")
+            except Exception as exc:
+                messagebox.showerror("File encryption failed", str(exc))
 
     def file_decrypt(self):
         key = self.get_key()
+        if not key:
+            return
         path = filedialog.askopenfilename(title="RESTORE EXTERNAL FILE")
-        if path and key:
-            content = self.vault.read_file(path)
-            cipher = CaesarCipher(key)
-            dec_data = cipher.decrypt(content)
-            
-          
-            new_path = self.vault.save_file(path, dec_data, "restored")
-            
-            self.view.lbl_output.config(text=f"FILE RESTORED: {new_path}",fg="#38bdf8")
+        if path:
+            try:
+                cipher = self._build_fernet()
+                with open(path, "r", encoding="utf-8") as file:
+                    content = file.read()
+                decrypted = cipher.decrypt(content.encode("utf-8"))
+                new_path = self.vault.save_file(path, decrypted.decode("utf-8"), "restored")
+                self.view.lbl_output.config(text=f"FILE RESTORED: {new_path}", fg="#38bdf8")
+            except Exception as exc:
+                messagebox.showerror("File decryption failed", str(exc))
 
     def export_qr(self):
-      text = self.view.ent_msg.get()
-      key = self.get_key()
+        text = self.view.ent_msg.get()
+        key = self.get_key()
+        if not text or not key:
+            return
 
-      engine = AdvancedCipher(key, "Agent_007")
-      enc, record_id, qr_token = engine.process(text)
-      vault = VaultManager("Secure")
-      vault.save_record({
-                             "id": record_id,
-                             "key": key,
-                             "agent": "Agent_007"
-                        })
-      img = qrcode.make(qr_token)
-      img.save("access_token.png")
-      self.view.show_image("access_token.png")
-      print(f"System: Record {record_id} saved. QR Generated.")
+        engine = AdvancedCipher(key, "Agent_007")
+        enc, record_id, qr_token = engine.process(text)
+        self.vault.save_record({
+            "id": record_id,
+            "agent": "Agent_007",
+            "status": "ACTIVE",
+        })
+        img = qrcode.make(qr_token)
+        img.save("access_token.png")
+        self.view.show_image("access_token.png")
